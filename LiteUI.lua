@@ -5,7 +5,7 @@ local mouse = player:GetMouse()
 local library = {
 	Name = 'Lite',
 	Version = 'v. 1.0.0',
-	Parent = game.CoreGui,
+	Parent = player.PlayerGui,
 	IsMobile = not game:GetService("UserInputService").KeyboardEnabled or false,
 	IsFileSystem = writefile and readfile and makefolder and true or false,
 	Enabled = false,
@@ -2672,6 +2672,8 @@ do
 								else
 									if Dropdown_Item.IsEnabled.Value then
 										library.Functions.BetterFindIndex(update_config, "CallBack")(value)
+									else
+										library.Functions.BetterFindIndex(update_config, "CallBack")(nil)
 									end
 								end
 							end
@@ -2705,6 +2707,8 @@ do
 								else
 									if Dropdown_Item.IsEnabled.Value then
 										library.Functions.BetterFindIndex(update_config, "CallBack")(value)
+									else
+										library.Functions.BetterFindIndex(update_config, "CallBack")(nil)
 									end
 								end
 							end
