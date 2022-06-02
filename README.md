@@ -18,6 +18,16 @@ print(encode_table)
 local decode_table = library.decode(encode_table)
 print(decode_table)
 ```
+***Only this type of data can be encoded*:**
+1. boolean
+2. number
+3. string
+4. table
+5. Vector3
+6. CFrame
+7. Instance
+8. Color3
+9. EnumItem
 > #### Save Config
 ```lua
 local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/SxnwDev/UI/main/LiteUI.lua"))()
