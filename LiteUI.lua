@@ -1558,6 +1558,26 @@ do
 				button.Text = library.Functions.BetterFindIndex(update_config, "Title")
 				button.SearchValue.Value = library.Functions.BetterFindIndex(update_config, "Title")
 			end
+			local function check_boolean(var)
+				if library.Functions.BetterFindIndex(update_config, var) ~= nil then
+					if typeof(library.Functions.BetterFindIndex(update_config, var)) == "boolean" then
+						return library.Functions.BetterFindIndex(update_config, var)
+					else
+						return false
+					end
+				elseif library.Functions.BetterFindIndex(config, var) ~= nil then
+					if typeof(library.Functions.BetterFindIndex(config, var)) == "boolean" then
+						return library.Functions.BetterFindIndex(config, var)
+					else
+						return false
+					end
+				else
+					return false
+				end
+			end
+
+			button.Disabled.Value = check_boolean("Disabled")
+			button.Disabled_Frame.Visible = check_boolean("Disabled")
 		end
 
 		return { Instance = button, Update = update }
@@ -2036,7 +2056,7 @@ do
 					ClipsDescendants = true,
 					Size = UDim2.new(1, 0, 1, 0),
 					Font = library.Settings.Elements_Font,
-					Text = library.Functions.BetterFindIndex(config, "default") and library.Functions.BetterFindIndex(config, "default").Name or "None",
+					Text = library.Functions.BetterFindIndex(config, "KeyBind_Default") and library.Functions.BetterFindIndex(config, "KeyBind_Default").Name or "None",
 					TextColor3 = library.Settings.theme.LightContrast,
 					TextSize = library.Settings.Elements_TextSize,
 					TextTruncate = Enum.TextTruncate.AtEnd,
@@ -2121,7 +2141,7 @@ do
 				toggle.Title.Size = UDim2.new(0, math.min(library.Functions.GetTextSize(toggle.Title.Text, library.Settings.Elements_TextSize, library.Settings.Elements_Font).X, toggle.AbsoluteSize.X - toggle.UIPadding.PaddingLeft.Offset - toggle.UIPadding.PaddingRight.Offset - toggle.Frame.AbsoluteSize.X), 1, 0)
 			end
 
-			if library.Functions.BetterFindIndex(update_config, "Default") then
+			if library.Functions.BetterFindIndex(update_config, "value") then
 				library.Functions.Tween(toggle.Frame.Button, { BackgroundColor3 = library.Settings.theme.Accent }, 0.3)
 				library.Functions.Tween(toggle.Frame.Button, { Position = UDim2.new(1, 0, 0.5, 0), AnchorPoint = Vector2.new(1, 0.5) }, 0.3)
 			else
@@ -2130,7 +2150,7 @@ do
 			end
 		end
 		local active = library.Functions.BetterFindIndex(config, "Default") or false
-		update({ Default = active })
+		update({ Value = active })
 
 		local over_KeyBind = false
 		local function update_KeyBind(update_config)
@@ -2165,15 +2185,13 @@ do
 				end)
 
 				if library.Functions.BetterFindIndex(config, "KeyBind_CallBack") then
-					library.Functions.BetterFindIndex(config, "KeyBind_CallBack")(function(...)
-						update_KeyBind({ ... })
-					end)
+					library.Functions.BetterFindIndex(config, "KeyBind_CallBack")()
 				end
 			end,
 		}
 
 		if library.Functions.BetterFindIndex(config, "KeyBind_Default") and library.Functions.BetterFindIndex(config, "KeyBind_CallBack") then
-			update_KeyBind({ Value = library.Functions.BetterFindIndex(config, "default") })
+			update_KeyBind({ Value = library.Functions.BetterFindIndex(config, "KeyBind_Default") })
 		end
 
 		toggle.KeyBind.MouseEnter:Connect(function()
@@ -2199,10 +2217,8 @@ do
 
 				update_KeyBind({ Value = key.KeyCode })
 
-				if library.Functions.BetterFindIndex(config, "changedCallback") then
-					library.Functions.BetterFindIndex(config, "changedCallback")(key, function(...)
-						update_KeyBind({ ... })
-					end)
+				if library.Functions.BetterFindIndex(config, "KeyBind_changedCallback") then
+					library.Functions.BetterFindIndex(config, "KeyBind_changedCallback")(key)
 				end
 			end
 		end)
@@ -2218,7 +2234,7 @@ do
 			else
 				active = not active
 			end
-			update({ Default = active })
+			update({ Value = active })
 
 			if library.Functions.BetterFindIndex(config, "CallBack") then
 				library.Functions.BetterFindIndex(config, "CallBack")(active)
@@ -2395,9 +2411,7 @@ do
 				update({ Value = key.KeyCode })
 
 				if library.Functions.BetterFindIndex(config, "changedCallback") then
-					library.Functions.BetterFindIndex(config, "changedCallback")(key, function(...)
-						update({ ... })
-					end)
+					library.Functions.BetterFindIndex(config, "changedCallback")(key)
 				end
 			end
 		end)
@@ -2872,19 +2886,28 @@ do
 
 			local temp_value = checkValue("Group")
 			if temp_value then
-				if temp_value[1] then
-					table.remove(library.CheckBox_groups[GroupName], table.find(library.CheckBox_groups[GroupName], checkbox))
-					GroupName = temp_value[2]
-					if not library.CheckBox_groups[GroupName] then
-						library.CheckBox_groups[GroupName] = {}
+				if temp_value[2] == "" then
+					if GroupName then
+						table.remove(library.CheckBox_groups[GroupName], table.find(library.CheckBox_groups[GroupName], checkbox))
 					end
-					table.insert(library.CheckBox_groups[GroupName], checkbox)
-				end
-				for _, v in pairs(library.CheckBox_groups[temp_value[2]]) do
-					if v ~= checkbox then
-						v.IsEnabled.Value = false
-						library.Functions.Tween(v.ImageButton,{ BackgroundColor3 = library.Settings.theme.Background }, 0.3)
-						library.Functions.Tween(v.ImageButton.ImageLabel, { ImageTransparency = 1 }, 0.3)
+					GroupName = nil
+				else
+					if temp_value[1] then
+						if GroupName then
+							table.remove(library.CheckBox_groups[GroupName], table.find(library.CheckBox_groups[GroupName], checkbox))
+						end
+						GroupName = temp_value[2]
+						if not library.CheckBox_groups[GroupName] then
+							library.CheckBox_groups[GroupName] = {}
+						end
+						table.insert(library.CheckBox_groups[GroupName], checkbox)
+					end
+					for _, v in pairs(library.CheckBox_groups[temp_value[2]]) do
+						if v ~= checkbox then
+							v.IsEnabled.Value = false
+							library.Functions.Tween(v.ImageButton,{ BackgroundColor3 = library.Settings.theme.Background }, 0.3)
+							library.Functions.Tween(v.ImageButton.ImageLabel, { ImageTransparency = 1 }, 0.3)
+						end
 					end
 				end
 			end
@@ -2963,7 +2986,7 @@ do
 			end
 		end)
 
-		return checkbox
+		return { Instance = checkbox, Update = update}
 	end
 	--#region 3dPlayer
 
