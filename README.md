@@ -37,6 +37,18 @@ library.Functions.SaveConfig_game("Some game", config) -- Save config
 library.Functions.SaveConfig_game_noReplace("Some game", config) -- Save config without rewriting already saved data (can be used to update some script without users configuration being reset)
 library.Functions.LoadConfig_game("Some game") -- Load config
 ```
+> #### Library Config
+```lua
+local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/SxnwDev/UI/main/LiteUI.lua"))()
+
+library.Name = 'Lite'
+library.Version = 'v. 1.0.0'
+library.Parent = game.Players.LocalPlayer.PlayerGui
+
+library.Settings.AntiAFK = true
+library.Settings.prefix = Enum.KeyCode.LeftAlt
+library.Settings.Elements_Font = Enum.Font.SourceSans
+```
 > #### Add Modules
 ```lua
 local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/SxnwDev/UI/main/LiteUI.lua"))()
