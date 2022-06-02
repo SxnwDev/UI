@@ -1,5 +1,33 @@
 # How To Use
 - ### Lite UI <sub>*It's still in development*</sub>
+> #### Encode / Decode
+```lua
+local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/SxnwDev/UI/main/LiteUI.lua"))()
+
+local temp_table = {
+    AutoFarm = true,
+    Distance = 4,
+    Settings = {
+        Enemy_Color = Color3.new(1, 0, 0),
+        Team_Color = Color3.new(0, 1, 0)
+    }
+}
+local encode_table = library.encode(temp_table)
+print(encode_table)
+
+local decode_table = library.decode(encode_table)
+print(decode_table)
+```
+> #### Save Config
+```lua
+local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/SxnwDev/UI/main/LiteUI.lua"))()
+
+local config = {}
+library.Functions.SaveConfig_game("Some game", config) -- Save config
+library.Functions.SaveConfig_game_noReplace("Some game", config) -- Save config without rewriting already saved data (can be used to update some script without users configuration being reset)
+library.Functions.LoadConfig_game("Some game") -- Load config
+```
+> #### Add Modules
 ```lua
 local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/SxnwDev/UI/main/LiteUI.lua"))()
 local window = library:new()
@@ -90,6 +118,9 @@ end
 ```
 > #### Update Modules
 ```lua
+local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/SxnwDev/UI/main/LiteUI.lua"))()
+
+local section = library:new():addPage():addSection()
 
 local button = section:addButton()
 local clipboard = section:addClipboardLabel()
