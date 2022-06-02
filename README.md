@@ -48,6 +48,12 @@ library.Parent = game.CoreGui
 library.Settings.AntiAFK = true
 library.Settings.prefix = Enum.KeyCode.LeftAlt
 library.Settings.Elements_Font = Enum.Font.SourceSans
+library.Settings.theme = {
+    Background = Color3.fromRGB(17, 14, 24), -- Purple THEME
+    Contrast = Color3.fromRGB(12, 2, 15), -- Purple THEME
+    DarkContrast = Color3.fromRGB(8, 0, 12), -- Purple THEME
+    Accent = Color3.fromRGB(55, 2, 105), -- Purple THEME
+}
 ```
 > #### Add Modules
 ```lua
