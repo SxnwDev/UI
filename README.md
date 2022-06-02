@@ -43,7 +43,7 @@ local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/SxnwD
 
 library.Name = 'Lite'
 library.Version = 'v. 1.0.0'
-library.Parent = game.Players.LocalPlayer.PlayerGui
+library.Parent = game.CoreGui
 
 library.Settings.AntiAFK = true
 library.Settings.prefix = Enum.KeyCode.LeftAlt
