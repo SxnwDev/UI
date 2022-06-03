@@ -142,6 +142,10 @@ do
         multi = false,
         callback = function() end
     })
+	section:add3DPlayer({
+		Player = game.Players.LocalPlayer,
+		UpdateAnim = true
+	})
 end
 ```
 > #### Update Modules
@@ -159,6 +163,7 @@ local toggle = section:addToggle()
 local checkbox = section:addCheckbox()
 local keybind = section:addKeybind()
 local dropdown = section:addDropdown()
+local 3dPlayer = section:add3DPlayer()
 
 button.Update({
     title = "new title",
@@ -203,5 +208,9 @@ dropdown.Update({
     default = "3",
     list = { 1, 2, 3, 4 },
     callback = function() end,
+})
+3dPlayer.Update({
+    Player = game.Players.LocalPlayer,
+    UpdateAnim = false,
 })
 ```
