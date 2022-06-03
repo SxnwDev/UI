@@ -5,7 +5,7 @@ local mouse = player:GetMouse()
 local library = {
 	Name = 'Lite',
 	Version = 'v. 1.0.0',
-	Parent = game.CoreGui,
+	Parent = game.CoreGui or player.PlayerGui or player:WaitForChild("PlayerGui", 5),
 	IsMobile = not game:GetService("UserInputService").KeyboardEnabled or false,
 	IsFileSystem = writefile and readfile and makefolder and true or false,
 	Enabled = false,
@@ -1394,9 +1394,6 @@ do
 				BackgroundColor3 = library.Settings.theme.Contrast,
 				Size = UDim2.new(1 / divisions, -(((5 * (divisions - 1)) / divisions) + 1), 0, 16),
 			}, {
-				Create('UICorner', {
-					CornerRadius = UDim.new(0, 8),
-				}),
 				Create('UIPadding', {
 					PaddingTop = UDim.new(0, 10),
 					PaddingLeft = UDim.new(0, 10),
@@ -1411,7 +1408,7 @@ do
 					Name = 'Section',
 					Value = divisions,
 				}),
-			})
+			}, UDim.new(0, 8))
 			table.insert(sections, i, section)
 		end
 
@@ -1593,9 +1590,6 @@ do
 			BackgroundColor3 = library.Settings.theme.Background,
 			Size = UDim2.new(1, 0, 0, library.Settings.Elements_Size),
 		}, {
-			Create('UICorner', {
-				CornerRadius = UDim.new(0, library.Functions.BetterFindIndex(config, 'Corner') or 5),
-			}),
 			Create('UIPadding', {
 				PaddingLeft = UDim.new(0, 10),
 				PaddingRight = UDim.new(0, 10),
@@ -1618,9 +1612,6 @@ do
 				Position = UDim2.new(1, 0, 0.5, 0),
 				AnchorPoint = Vector2.new(1, 0.5),
 			}, {
-				Create('UICorner', {
-					CornerRadius = UDim.new(0, 5),
-				}),
 				Create('ImageLabel', {
 					Image = 'rbxassetid://7072707790',
 					ImageColor3 = library.Settings.theme.TextColor,
@@ -1629,12 +1620,12 @@ do
 					Position = UDim2.new(0.5, 0, 0.5, 0),
 					AnchorPoint = Vector2.new(0.5, 0.5),
 				}),
-			}),
+			}, UDim.new(0, library.Functions.BetterFindIndex(config, 'Corner') or 5)),
 			Create('StringValue', {
 				Name = 'SearchValue',
 				Value = ((library.Functions.BetterFindIndex(config, 'Text') and library.Functions.BetterFindIndex(config,'Text') ~= '' and library.Functions.BetterFindIndex(config, 'Text')) or 'Clipboard Label'):gsub('<[^<>]->', ''),
 			}),
-		})
+		}, UDim.new(0, library.Functions.BetterFindIndex(config, 'Corner') or 5))
 		table.insert(self.modules, ClipboardLabel)
         ClipboardLabel.ImageButton.Size = UDim2.new(0, ClipboardLabel.ImageButton.AbsoluteSize.Y, 0.85, 0)
 
@@ -2993,7 +2984,149 @@ do
 		return { Instance = checkbox, Update = update}
 	end
 	--#region 3dPlayer
+	function library.section:add3DPlayer(config: table): Instance
+		config = config or {}
+		local ViewPlayer = Create("ViewportFrame", {
+			Name = "ViewPlayer_Element",
+			Parent = (library.Functions.BetterFindIndex(config, "section") or 1) > #self.container and self.container[#self.container] or self.container[library.Functions.BetterFindIndex(config, "section") or 1],
+			BackgroundColor3 = library.Settings.theme.Background,
+			Size = library.Functions.BetterFindIndex(config, "Size") or UDim2.new(1, 0, 0, library.Settings.Elements_Size * 8),
+		}, {
+			Create("ImageButton", {
+				BackgroundColor3 = library.Settings.theme.Contrast,
+				AutoButtonColor = false,
+				Size = UDim2.new(0, library.Settings.Elements_Size, 0, library.Settings.Elements_Size),
+				Position = UDim2.new(1, -5, 0, 5),
+				AnchorPoint = Vector2.new(1, 0),
+			}, {
+				Create("ImageLabel", {
+					Image = "rbxassetid://7734051052",
+					ImageColor3 = library.Settings.theme.TextColor,
+					BackgroundTransparency = 1,
+					Size = UDim2.new(0.7, 0, 0.7, 0),
+					Position = UDim2.new(0.5, 0, 0.5, 0),
+					AnchorPoint = Vector2.new(0.5, 0.5),
+				}),
+			}, UDim.new(0, library.Functions.BetterFindIndex(config, "Corner") or 5)),
+			Create("WorldModel"),
+			Create("StringValue", {
+				Name = "SearchValue",
+				Value = library.Functions.BetterFindIndex(config, "Player") and typeof(library.Functions.BetterFindIndex(config, "Player")) == "Player" or "ViewPlayer",
+			}),
+		}, UDim.new(0, library.Functions.BetterFindIndex(config, "Corner") or 5))
 
+		table.insert(self.modules, ViewPlayer)
+
+		local PV_connections = {}
+
+		local function Update(update_config: table)
+			update_config = update_config or {}
+			for i, v in pairs(PV_connections) do
+				pcall(function()
+					v:Disconnect()
+				end)
+			end
+			table.clear(PV_connections)
+
+			local function check(var)
+				if library.Functions.BetterFindIndex(update_config, var) ~= nil then
+					return library.Functions.BetterFindIndex(update_config, var)
+				elseif library.Functions.BetterFindIndex(config, var) ~= nil then
+					return library.Functions.BetterFindIndex(config, var)
+				end
+			end
+
+			local PLAYER = check("Player")
+			if not PLAYER or typeof(PLAYER) ~= "Instance" or PLAYER.Parent.Name ~= "Players" then
+				return
+			end
+			ViewPlayer.SearchValue.Value = PLAYER.Name
+
+			local CHARACTER = PLAYER.Character or PLAYER:waitForChild("Character", 5)
+			if not CHARACTER then
+				return
+			end
+
+			ViewPlayer.WorldModel:ClearAllChildren()
+
+			CHARACTER.Archivable = true
+
+			local model = CHARACTER:Clone()
+			model.Name = "Model"
+			model.Parent = ViewPlayer.WorldModel
+			model.Humanoid.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None
+			model:SetPrimaryPartCFrame(CFrame.Angles(0, 0, 0))
+			model:SetPrimaryPartCFrame(library.Functions.BetterFindIndex(update_config, "Position") or CFrame.new(Vector3.new(0, 0, -5), Vector3.new(0, 0, 0)))
+
+			local function UpdateAnim(Char, CloneChar)
+				if #CloneChar.Humanoid:GetPlayingAnimationTracks() > #Char.Humanoid:GetPlayingAnimationTracks() then
+					for i = #CloneChar.Humanoid:GetPlayingAnimationTracks(), #Char.Humanoid:GetPlayingAnimationTracks(), -1 do
+						pcall(function()
+							CloneChar.Humanoid:GetPlayingAnimationTracks()[i]:Stop(0.1)
+						end)
+					end
+				end
+				for i, v in pairs(Char.Humanoid:GetPlayingAnimationTracks()) do
+					if not CloneChar.Humanoid:GetPlayingAnimationTracks()[i] then
+						CloneChar.Humanoid.Animator:LoadAnimation(v.Animation):Play(0.2)
+					else
+						if
+							CloneChar.Humanoid:GetPlayingAnimationTracks()[i].Animation.AnimationId
+							~= v.Animation.AnimationId
+						then
+							for k = #CloneChar.Humanoid:GetPlayingAnimationTracks(), i, -1 do
+								pcall(function()
+									CloneChar.Humanoid:GetPlayingAnimationTracks()[i]:Stop(0.1)
+								end)
+							end
+							CloneChar.Humanoid.Animator:LoadAnimation(v.Animation):Play(0.2)
+						end
+					end
+				end
+			end
+
+			table.insert(PV_connections, game:GetService("RunService").Stepped:Connect(function()
+				if check("UpdateAnim") and check("UpdateAnim") == true then
+					pcall(function()
+						UpdateAnim(CHARACTER, model)
+					end)
+				end
+			end))
+
+			local currentX
+			local MouseButton1Down = false
+			table.insert(PV_connections, ViewPlayer.InputBegan:Connect(function(input, processed)
+				if not processed and input.UserInputType == Enum.UserInputType.MouseButton1 or library.IsMobile and Enum.UserInputType.Touch then
+					MouseButton1Down = true
+					input.Changed:Connect(function()
+						if input.UserInputState == Enum.UserInputState.End then
+							MouseButton1Down = false
+							currentX = nil
+						end
+					end)
+				end
+			end))
+			table.insert(PV_connections, ViewPlayer.MouseMoved:Connect(function(X, Y)
+				if not MouseButton1Down then
+					return
+				end
+				if currentX then
+					model:SetPrimaryPartCFrame(model.PrimaryPart.CFrame * CFrame.fromEulerAnglesXYZ(0, ((X - currentX) * 0.025), 0))
+				end
+				currentX = X
+			end))
+		end
+
+		if library.Functions.BetterFindIndex(config, "player") and typeof(library.Functions.BetterFindIndex(config, "Player")) == "Instance" and library.Functions.BetterFindIndex(config, "Player").Parent.Name == "Players" then
+			Update()
+		end
+		ViewPlayer.ImageButton.MouseButton1Click:Connect(function()
+			library.Functions.Ripple(ViewPlayer.ImageButton, 0.5)
+			Update()
+		end)
+
+		return { Instance = ViewPlayer, Update = Update, Model = ViewPlayer.WorldModel:FindFirstChild("Model") or nil }
+	end
 	--#endregion
 	--#region TextBox's
 
