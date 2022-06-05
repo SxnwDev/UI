@@ -2061,7 +2061,7 @@ do
 				Name = 'Disabled_Frame',
 				BackgroundColor3 = library.Settings.theme.DarkContrast,
 				BackgroundTransparency = 0.2,
-				Size = UDim2.new(1, 0, 1, 0),
+				Size = UDim2.new(1, 20, 1, 0),
 				Visible = library.Functions.BetterFindIndex(config, 'Disabled') or false,
 				ZIndex = 2
 			}, {
@@ -2287,7 +2287,7 @@ do
 				Name = 'Disabled_Frame',
 				BackgroundColor3 = library.Settings.theme.DarkContrast,
 				BackgroundTransparency = 0.2,
-				Size = UDim2.new(1, 0, 1, 0),
+				Size = UDim2.new(1, 20, 1, 0),
 				Visible = library.Functions.BetterFindIndex(config, 'Disabled') or false,
 				ZIndex = 2
 			}, {
