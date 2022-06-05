@@ -2062,6 +2062,8 @@ do
 				BackgroundColor3 = library.Settings.theme.DarkContrast,
 				BackgroundTransparency = 0.2,
 				Size = UDim2.new(1, 20, 1, 0),
+				Position = UDim2.new(0.5, 0, 0, 0),
+				AnchorPoint = Vector2.new(0.5, 0),
 				Visible = library.Functions.BetterFindIndex(config, 'Disabled') or false,
 				ZIndex = 2
 			}, {
@@ -2288,6 +2290,8 @@ do
 				BackgroundColor3 = library.Settings.theme.DarkContrast,
 				BackgroundTransparency = 0.2,
 				Size = UDim2.new(1, 20, 1, 0),
+				Position = UDim2.new(0.5, 0, 0, 0),
+				AnchorPoint = Vector2.new(0.5, 0),
 				Visible = library.Functions.BetterFindIndex(config, 'Disabled') or false,
 				ZIndex = 2
 			}, {
