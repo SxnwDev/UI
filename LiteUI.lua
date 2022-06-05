@@ -2983,7 +2983,6 @@ do
 
 		return { Instance = checkbox, Update = update}
 	end
-	--#region 3dPlayer
 	function library.section:add3DPlayer(config: table): Instance
 		config = config or {}
 		local ViewPlayer = Create("ViewportFrame", {
@@ -3011,7 +3010,7 @@ do
 			Create("WorldModel"),
 			Create("StringValue", {
 				Name = "SearchValue",
-				Value = library.Functions.BetterFindIndex(config, "Player") and typeof(library.Functions.BetterFindIndex(config, "Player")) == "Player" or "ViewPlayer",
+				Value = library.Functions.BetterFindIndex(config, "Player") and typeof(library.Functions.BetterFindIndex(config, "Player")) == "Instance" or "ViewPlayer",
 			}),
 		}, UDim.new(0, library.Functions.BetterFindIndex(config, "Corner") or 5))
 
@@ -3127,7 +3126,6 @@ do
 
 		return { Instance = ViewPlayer, Update = Update, Model = ViewPlayer.WorldModel:FindFirstChild("Model") or nil }
 	end
-	--#endregion
 	--#region TextBox's
 
 	--#endregion
