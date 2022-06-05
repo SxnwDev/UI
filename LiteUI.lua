@@ -3781,5 +3781,5 @@ library.Icons = {
 	["zoom-out"] = "rbxassetid://7743879082",
 	["zoom-out-2"] = "rbxassetid://3610253853",
 }
-
+print("Lite UI")
 return library
