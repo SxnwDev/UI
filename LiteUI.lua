@@ -3054,7 +3054,7 @@ do
 			model.Name = "Model"
 			model.Parent = ViewPlayer.WorldModel
 			model.Humanoid.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None
-			model:SetPrimaryPartCFrame(check("Position") or CFrame.new(Vector3.new(0, 0, -5), Vector3.new(0, 0, 0)) * CFrame.Angles(0, 0, 0))
+			model:SetPrimaryPartCFrame((check("Position") or CFrame.new(Vector3.new(0, 0, -5), Vector3.new(0, 0, 0))) * CFrame.Angles(0, 0, 0))
 
 			local function UpdateAnim(Char, CloneChar)
 				if #CloneChar.Humanoid:GetPlayingAnimationTracks() > #Char.Humanoid:GetPlayingAnimationTracks() then
@@ -3781,5 +3781,5 @@ library.Icons = {
 	["zoom-out"] = "rbxassetid://7743879082",
 	["zoom-out-2"] = "rbxassetid://3610253853",
 }
-print("Lite UI")
+
 return library
