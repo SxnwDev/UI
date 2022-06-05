@@ -3010,7 +3010,7 @@ do
 			Create("WorldModel"),
 			Create("StringValue", {
 				Name = "SearchValue",
-				Value = library.Functions.BetterFindIndex(config, "Player") and typeof(library.Functions.BetterFindIndex(config, "Player")) == "Instance" or "ViewPlayer",
+				Value = library.Functions.BetterFindIndex(config, "Player") and typeof(library.Functions.BetterFindIndex(config, "Player")) == "Instance" and library.Functions.BetterFindIndex(config, "Player").Name or "ViewPlayer",
 			}),
 		}, UDim.new(0, library.Functions.BetterFindIndex(config, "Corner") or 5))
 
