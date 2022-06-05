@@ -1768,7 +1768,7 @@ do
 				if typeof(value) == "number" then
 					return value
 				else
-					return tonumber(value:gsub('%D+', ''))
+					return tonumber((value:gsub('%D+', '')))
 				end
 			end
 		end
