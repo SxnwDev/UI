@@ -3123,8 +3123,11 @@ do
 			library.Functions.Ripple(ViewPlayer.ImageButton, 0.5)
 			Update()
 		end)
+		local function getModel()
+			return ViewPlayer.WorldModel:FindFirstChild("Model") or nil
+		end
 
-		return { Instance = ViewPlayer, Update = Update, Model = ViewPlayer.WorldModel:FindFirstChild("Model") or nil }
+		return { Instance = ViewPlayer, Update = Update, getModel = getModel }
 	end
 	--#region TextBox's
 
