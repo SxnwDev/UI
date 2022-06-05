@@ -2144,9 +2144,15 @@ do
 			if library.Functions.BetterFindIndex(update_config, "value") then
 				library.Functions.Tween(toggle.Frame.Button, { BackgroundColor3 = library.Settings.theme.Accent }, 0.3)
 				library.Functions.Tween(toggle.Frame.Button, { Position = UDim2.new(1, 0, 0.5, 0), AnchorPoint = Vector2.new(1, 0.5) }, 0.3)
+				if library.Functions.BetterFindIndex(config, "CallBack") then
+					library.Functions.BetterFindIndex(config, "CallBack")(true)
+				end
 			else
 				library.Functions.Tween(toggle.Frame.Button, { BackgroundColor3 = library.Settings.theme.LightContrast }, 0.3)
 				library.Functions.Tween(toggle.Frame.Button, { Position = UDim2.new(0, 0, 0.5, 0), AnchorPoint = Vector2.new(0, 0.5) }, 0.3)
+				if library.Functions.BetterFindIndex(config, "CallBack") then
+					library.Functions.BetterFindIndex(config, "CallBack")(false)
+				end
 			end
 		end
 		local active = library.Functions.BetterFindIndex(config, "Default") or false
@@ -2238,10 +2244,6 @@ do
 				active = not active
 			end
 			update({ Value = active })
-
-			if library.Functions.BetterFindIndex(config, "CallBack") then
-				library.Functions.BetterFindIndex(config, "CallBack")(active)
-			end
 		end)
 
 		return { Instance = toggle, Update = update, KeyBind = { Instance = toggle.KeyBind, Update = update_KeyBind } }
