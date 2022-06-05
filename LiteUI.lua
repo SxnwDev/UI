@@ -1527,6 +1527,7 @@ do
         button.Disabled_Frame.ImageLabel.Position = UDim2.new(1, -button.Disabled_Frame.ImageLabel.AbsoluteSize.Y, 0.5, 0)
 
 		table.insert(self.modules, button)
+		self.page:Resize()
 
 		local debounce
 
@@ -1627,6 +1628,8 @@ do
 			}),
 		}, UDim.new(0, library.Functions.BetterFindIndex(config, 'Corner') or 5))
 		table.insert(self.modules, ClipboardLabel)
+		self.page:Resize()
+
         ClipboardLabel.ImageButton.Size = UDim2.new(0, ClipboardLabel.ImageButton.AbsoluteSize.Y, 0.85, 0)
 
 		ClipboardLabel.ImageButton.MouseButton1Click:connect(function()
@@ -1700,6 +1703,7 @@ do
 		frame.Description.Size = UDim2.new(0, math.min(library.Functions.GetTextSize(descText, library.Settings.Elements_TextSize, library.Settings.Elements_Font).X, frame.AbsoluteSize.X - library.Functions.GetTextSize(titleText, library.Settings.Elements_TextSize, library.Settings.Elements_Font).X), 1, 0)
 
 		table.insert(self.modules, frame)
+		self.page:Resize()
 
 		local function update(update_config)
 			update_config = update_config or {}
@@ -1743,10 +1747,11 @@ do
 		end
 
 		label:GetPropertyChangedSignal("Size"):Connect(function()
-			self:Resize()
+			self.page:Resize()
 		end)
 
 		table.insert(self.modules, label)
+		self.page:Resize()
 
 		local function update(update_config)
 			update_config = update_config or {}
@@ -1875,6 +1880,7 @@ do
         slider.Disabled_Frame.ImageLabel.Position = UDim2.new(1, -slider.Disabled_Frame.ImageLabel.AbsoluteSize.Y, 0.5, 0)
 
 		table.insert(self.modules, slider)
+		self.page:Resize()
 
 
 		local dragging, last
@@ -2096,6 +2102,7 @@ do
 		toggle.Frame.Size = UDim2.new(0, toggle.Frame.AbsoluteSize.Y * 2.6, 0.5, 0)
 		toggle.Frame.Button.Size = UDim2.new(0, toggle.Frame.Button.AbsoluteSize.Y, 0, toggle.Frame.Button.AbsoluteSize.Y)
 		table.insert(self.modules, toggle)
+		self.page:Resize()
 
 		local function update(update_config)
 			update_config = update_config or {}
@@ -2324,6 +2331,7 @@ do
 		keybind.Title.Size = UDim2.new(0, TitleSize, 1, 0)
 
 		table.insert(self.modules, keybind)
+		self.page:Resize()
 
 		local function update(update_config)
 			update_config = update_config or {}
@@ -2514,6 +2522,7 @@ do
 		dropdown.Frame.TextBox.Size = UDim2.new(1, - dropdown.Frame.Frame.AbsoluteSize.Y, 1, 0)
 
 		table.insert(self.modules, dropdown)
+		self.page:Resize()
 
 		local list = library.Functions.BetterFindIndex(config, "List") or {}
 		local toggling_table = {}
@@ -2862,6 +2871,7 @@ do
 		checkbox.Title.Size = UDim2.new(1, - checkbox.ImageButton.AbsoluteSize.Y - 10, 1, 0)
 		checkbox.Title.Position = UDim2.new(0, checkbox.ImageButton.AbsoluteSize.Y + 10, 0, 0)
 		table.insert(self.modules, checkbox)
+		self.page:Resize()
 
 		local GroupName = library.Functions.BetterFindIndex(config, "Group")
 		if GroupName then
@@ -3022,6 +3032,7 @@ do
 		}, UDim.new(0, library.Functions.BetterFindIndex(config, "Corner") or 5))
 
 		table.insert(self.modules, ViewPlayer)
+		self.page:Resize()
 
 		local PV_connections = {}
 
