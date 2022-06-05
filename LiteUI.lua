@@ -2144,6 +2144,9 @@ do
 		end
 		local active = library.Functions.BetterFindIndex(config, "Default") or false
 		update({ Value = active })
+		if library.Functions.BetterFindIndex(config, "CallBack") then
+			library.Functions.BetterFindIndex(config, "CallBack")(active)
+		end
 
 		local over_KeyBind = false
 		local function update_KeyBind(update_config)
