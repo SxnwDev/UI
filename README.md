@@ -139,6 +139,7 @@ do
         title = "Dropdown",
         corner = 5,
         List = { 1, 2, 3, 4, 5 },
+	keybind = false,
         multi = false,
         callback = function() end
     })
@@ -205,6 +206,7 @@ keybind.Update({
 dropdown.Update({
     title = "new title",
     multi = false,
+    keybind = false,
     default = "3",
     list = { 1, 2, 3, 4 },
     callback = function() end,
