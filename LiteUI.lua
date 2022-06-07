@@ -2444,10 +2444,8 @@ do
 				Size = UDim2.new(1, 0, 0, library.Settings.Elements_Size),
 			}, {
 				Create("UIPadding", {
-					PaddingBottom = UDim.new(0, 5),
 					PaddingLeft = UDim.new(0, 10),
-					PaddingRight = UDim.new(0, 5),
-					PaddingTop = UDim.new(0, 5),
+					PaddingRight = UDim.new(0, 10),
 				}),
 				Create("UIListLayout", {
 					Padding = UDim.new(0, 0),
@@ -2473,7 +2471,7 @@ do
 				Create("Frame", {
 					LayoutOrder = 2,
 					BackgroundTransparency = 1,
-					Size = UDim2.new(0, 0, 1.5, 0)
+					Size = UDim2.new(0, 0, 0.8, 0)
 				}, {
 					Create("ImageButton", {
 						BackgroundTransparency = 1,
@@ -2482,6 +2480,30 @@ do
 						ImageColor3 = library.Settings.theme.TextColor,
 					}),
 				}),
+				Create("ImageButton", {
+					LayoutOrder = 3,
+					Name = "KeyBind",
+					AutoButtonColor = false,
+					BackgroundColor3 = library.Settings.theme.Contrast,
+					Visible = library.Functions.BetterFindIndex(config, 'KeyBind') or false,
+					Size = UDim2.new(0, 0, 0.55, 0),
+				}, {
+					Create("TextLabel", {
+						Name = "Text",
+						BackgroundTransparency = 1,
+						ClipsDescendants = true,
+						Size = UDim2.new(1, 0, 1, 0),
+						Font = library.Settings.Elements_Font,
+						Text = library.Functions.BetterFindIndex(config, "KeyBind_Default") and library.Functions.BetterFindIndex(config, "KeyBind_Default").Name or "None",
+						TextColor3 = library.Settings.theme.LightContrast,
+						TextSize = library.Settings.Elements_TextSize,
+						TextTruncate = Enum.TextTruncate.AtEnd,
+					}),
+					Create("UIPadding", {
+						PaddingLeft = UDim.new(0, 5),
+						PaddingRight = UDim.new(0, 5),
+					}),
+				}, UDim.new(0, library.Functions.BetterFindIndex(config, "Corner") or 5)),
 			}, UDim.new(0, library.Functions.BetterFindIndex(config, "Corner") or 5)),
 			Create("Frame", {
 				Name = "List",
@@ -2520,8 +2542,9 @@ do
 				Value = library.Functions.BetterFindIndex(config, "Title") and library.Functions.BetterFindIndex(config, "Title") ~= "" and library.Functions.BetterFindIndex(config, "Title") or "DropDown",
 			}),
 		})
+		dropdown.Frame.KeyBind.Size = UDim2.new(0, dropdown.Frame.KeyBind.AbsoluteSize.Y * 5, 0.55, 0)
 		dropdown.Frame.Frame.Size = UDim2.new(0, dropdown.Frame.Frame.AbsoluteSize.Y, 0, dropdown.Frame.Frame.AbsoluteSize.Y)
-		dropdown.Frame.TextBox.Size = UDim2.new(1, - dropdown.Frame.Frame.AbsoluteSize.Y, 1, 0)
+		dropdown.Frame.TextBox.Size = UDim2.new(1, - dropdown.Frame.Frame.AbsoluteSize.X, 1, 0)
 
 		table.insert(self.modules, dropdown)
 		self.page:Resize()
@@ -2531,6 +2554,7 @@ do
 		local multiList = {}
 		local multiListGroup = {}
 		local savedValues = {}
+		local _value
 
 		local function update(update_config)
 			update_config = update_config or {}
@@ -2538,6 +2562,31 @@ do
 			if library.Functions.BetterFindIndex(update_config, "Title") and library.Functions.BetterFindIndex(update_config, "Title") ~= "" then
 				dropdown.Frame.TextBox.PlaceholderText = library.Functions.BetterFindIndex(update_config, "Title")
 				dropdown.SearchValue.Value = library.Functions.BetterFindIndex(update_config, "Title")
+			end
+
+			local function check_boolean(var)
+				if library.Functions.BetterFindIndex(update_config, var) ~= nil then
+					if typeof(library.Functions.BetterFindIndex(update_config, var)) == "boolean" then
+						return library.Functions.BetterFindIndex(update_config, var)
+					else
+						return false
+					end
+				elseif library.Functions.BetterFindIndex(config, var) ~= nil then
+					if typeof(library.Functions.BetterFindIndex(config, var)) == "boolean" then
+						return library.Functions.BetterFindIndex(config, var)
+					else
+						return false
+					end
+				else
+					return false
+				end
+			end
+
+			dropdown.Frame.KeyBind.Visible = check_boolean("KeyBind")
+			if check_boolean("KeyBind") then
+				dropdown.Frame.TextBox.Size = UDim2.new(1, - dropdown.Frame.Frame.AbsoluteSize.X - dropdown.Frame.KeyBind.AbsoluteSize.X, 1, 0)
+			else
+				dropdown.Frame.TextBox.Size = UDim2.new(1, - dropdown.Frame.Frame.AbsoluteSize.X, 1, 0)
 			end
 
 			local function updateDropdown_Item(dropdown_Item: Instance, value: boolean, multi: boolean)
@@ -2676,13 +2725,25 @@ do
 							)
 
 							if library.Functions.BetterFindIndex(update_config, "CallBack") then
-								if library.Functions.BetterFindIndex(update_config, "Multi") then
-									library.Functions.BetterFindIndex(update_config, "CallBack")(multiList)
-								else
-									if Dropdown_Item.IsEnabled.Value then
-										library.Functions.BetterFindIndex(update_config, "CallBack")(value)
+								if check_boolean("KeyBind") then
+									if library.Functions.BetterFindIndex(update_config, "Multi") then
+										_value = multiList
 									else
-										library.Functions.BetterFindIndex(update_config, "CallBack")(nil)
+										if Dropdown_Item.IsEnabled.Value then
+											_value = value
+										else
+											_value = nil
+										end
+									end
+								else
+									if library.Functions.BetterFindIndex(update_config, "Multi") then
+										library.Functions.BetterFindIndex(update_config, "CallBack")(multiList)
+									else
+										if Dropdown_Item.IsEnabled.Value then
+											library.Functions.BetterFindIndex(update_config, "CallBack")(value)
+										else
+											library.Functions.BetterFindIndex(update_config, "CallBack")(nil)
+										end
 									end
 								end
 							end
@@ -2711,13 +2772,25 @@ do
 							)
 
 							if library.Functions.BetterFindIndex(update_config, "CallBack") then
-								if library.Functions.BetterFindIndex(update_config, "Multi") then
-									library.Functions.BetterFindIndex(update_config, "CallBack")(multiList)
-								else
-									if Dropdown_Item.IsEnabled.Value then
-										library.Functions.BetterFindIndex(update_config, "CallBack")(value)
+								if check_boolean("KeyBind") then
+									if library.Functions.BetterFindIndex(update_config, "Multi") then
+										_value = multiList
 									else
-										library.Functions.BetterFindIndex(update_config, "CallBack")(nil)
+										if Dropdown_Item.IsEnabled.Value then
+											_value = value
+										else
+											_value = nil
+										end
+									end
+								else
+									if library.Functions.BetterFindIndex(update_config, "Multi") then
+										library.Functions.BetterFindIndex(update_config, "CallBack")(multiList)
+									else
+										if Dropdown_Item.IsEnabled.Value then
+											library.Functions.BetterFindIndex(update_config, "CallBack")(value)
+										else
+											library.Functions.BetterFindIndex(update_config, "CallBack")(nil)
+										end
 									end
 								end
 							end
@@ -2758,6 +2831,54 @@ do
 			end
 		end
 
+		local function update_KeyBind(update_config)
+			update_config = update_config or {}
+
+			if self.binds[dropdown].connection then
+				self.binds[dropdown].connection = self.binds[dropdown].connection:UnBind()
+				if table.find(library.binds, self.binds[dropdown].connection) then
+					table.remove(library.binds, table.find(library.binds, self.binds[dropdown].connection))
+				end
+			end
+
+			if library.Functions.BetterFindIndex(update_config, "value") then
+				self.binds[dropdown].connection = library.Functions.BindToKey(library.Functions.BetterFindIndex(update_config, "value"), self.binds[dropdown].callback)
+				table.insert(library.binds, self.binds[dropdown].connection)
+				dropdown.Frame.KeyBind.Text.Text = library.Functions.BetterFindIndex(update_config, "value").Name
+			else
+				dropdown.Frame.KeyBind.Text.Text = "None"
+			end
+		end
+
+		self.binds[dropdown] = {
+			callback = function()
+				task.spawn(function()
+					library.Functions.Tween(dropdown.Frame.KeyBind.Text, { TextColor3 = library.Settings.theme.TextColor }, 0.4).Completed:Wait()
+					library.Functions.Tween(dropdown.Frame.KeyBind.Text, { TextColor3 = library.Settings.theme.LightContrast }, 0.2)
+				end)
+
+				if library.Functions.BetterFindIndex(config, "CallBack") then
+					if dropdown.Frame.KeyBind.Visible then
+						library.Functions.BetterFindIndex(config, "CallBack")(_value)
+					end
+				end
+			end,
+		}
+		dropdown.Frame.KeyBind.MouseButton1Click:Connect(function()
+			library.Functions.Ripple(dropdown.Frame.KeyBind, 0.5)
+
+			if self.binds[dropdown].connection then
+				return update_KeyBind()
+			end
+
+			if dropdown.Frame.KeyBind.Text.Text == "None" then
+				dropdown.Frame.KeyBind.Text.Text = "..."
+
+				local key = library.Functions.KeyPressed()
+
+				update_KeyBind({ Value = key.KeyCode })
+			end
+		end)
 		dropdown.Frame.Frame.ImageButton.MouseButton1Click:Connect(function()
 			if dropdown.Frame.Frame.ImageButton.Rotation == 0 then
 				toggle(true)
