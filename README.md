@@ -61,7 +61,7 @@ local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/SxnwD
 local window = library:new()
 
 local page = window:addPage({
-    icon = "page_icon",
+    icon = nil, -- or roblox image id
     title = "page_name",
 })
 do
