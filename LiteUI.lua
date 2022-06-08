@@ -8,6 +8,7 @@ local library = {
 	Parent = game.CoreGui or player.PlayerGui or player:WaitForChild("PlayerGui", 5),
 	IsMobile = not game:GetService("UserInputService").KeyboardEnabled or false,
 	IsFileSystem = writefile and readfile and makefolder and true or false,
+	LeftBar_MinSize = 25,
 	Enabled = false,
 	Visible = true,
 	Settings = {
@@ -896,7 +897,7 @@ do
             }, UDim.new(0, 8)),
             Create('Frame', {
                 Name = 'Left_Frame',
-                Size = UDim2.new(0, math.max(UISize.X.Offset * 0.07, 25), 1, 0),
+                Size = UDim2.new(0, math.max(UISize.X.Offset * 0.07, library.LeftBar_MinSize), 1, 0),
                 BackgroundColor3 = library.Settings.theme.Background
             }, {
                 Create('Frame', {
@@ -926,8 +927,8 @@ do
                 Name = 'Section_Container',
                 ClipsDescendants = true,
                 ScrollingEnabled = false,
-                Size = UDim2.new(1, -math.max(UISize.X.Offset * 0.07, 25), 0.9, 0),
-                Position = UDim2.new(0, math.max(UISize.X.Offset * 0.07, 25), 0.1, 0),
+                Size = UDim2.new(1, -math.max(UISize.X.Offset * 0.07, library.LeftBar_MinSize), 0.9, 0),
+                Position = UDim2.new(0, math.max(UISize.X.Offset * 0.07, library.LeftBar_MinSize), 0.1, 0),
                 BackgroundTransparency = 1,
                 BorderSizePixel = 0,
                 ScrollBarThickness = 0,
