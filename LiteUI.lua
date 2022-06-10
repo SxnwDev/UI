@@ -5,12 +5,10 @@ local mouse = player:GetMouse()
 local library = {
 	Name = 'Lite',
 	Version = 'v. 1.0.0',
+	Icon = 'rbxassetid://6023426988',
 	Parent = game.CoreGui or player.PlayerGui or player:WaitForChild("PlayerGui", 5),
 	IsMobile = not game:GetService("UserInputService").KeyboardEnabled or false,
 	IsFileSystem = writefile and readfile and makefolder and true or false,
-	LeftBar_MinSize = 25,
-	Enabled = false,
-	Visible = true,
 	Settings = {
 		NewUser = true,
 		AntiAFK = true,
@@ -18,6 +16,7 @@ local library = {
 		Elements_Size = 0,
 		Elements_TextSize = 0,
 		Elements_Font = Enum.Font.SourceSans,
+		LeftBar_MinSize = 25,
 		theme = {
 			-- Background = Color3.fromRGB(17, 14, 24), -- Purple THEME
 			-- Contrast = Color3.fromRGB(12, 2, 15), -- Purple THEME
@@ -33,7 +32,6 @@ local library = {
 			LightContrast = Color3.fromRGB(160, 160, 160),
 			TextColor = Color3.fromRGB(255, 255, 255),
 		},
-		Games = {},
 	},
 	CheckBox_groups = {},
 	connections = {},
@@ -41,10 +39,10 @@ local library = {
 	binds = {},
 	Functions = {},
 	objects = {},
-
     page = {},
     section = {}
 }
+local original_library_settings
 
 -- encode/decode function
 do
@@ -618,16 +616,26 @@ do
 			if not isfolder(library.Name .. ' UI') then
 				makefolder(library.Name .. ' UI')
 			end
-			if not isfile(library.Name .. ' UI/Settings.lua') then
-				writefile(library.Name .. ' UI/Settings.lua', library.encode({}))
-			end
+			-- if not isfile(library.Name .. ' UI/Settings.lua') then
+			-- 	writefile(library.Name .. ' UI/Settings.lua', library.encode({}))
+			-- end
 
-			local savesettings = library.decode(readfile(library.Name .. ' UI/Settings.lua'))
-			for i, v in pairs(library.Settings) do
-				savesettings[i] = v
-			end
+			-- local savesettings = library.decode(readfile(library.Name .. ' UI/Settings.lua'))
+			-- for i, v in pairs(library.Settings) do
+			-- 	savesettings[i] = v
+			-- end
 
-			writefile(library.Name .. ' UI/Settings.lua', library.encode(savesettings))
+			local settings = {
+				Name = library.Name,
+				Version = library.Version,
+				Icon = library.Icon,
+				Parent = library.Parent,
+				IsMobile = library.IsMobile,
+				IsFileSystem = library.IsFileSystem,
+				Settings = library.Settings,
+			}
+
+			writefile(library.Name .. ' UI/Settings.lua', library.encode(settings))
 		end
 	end
 	function library.Load()
@@ -639,10 +647,23 @@ do
 				return
 			end
 
-			for i, v in pairs(library.decode(readfile(library.Name .. ' UI/Settings.lua'))) do
-				library.Settings[i] = v
+			local success, message = pcall(function()
+				local function loadSettings(tbl, loadIn)
+					for i, v in pairs(tbl) do
+						if typeof(v) ~= "table" then
+							loadIn[i] = v
+						else
+							loadSettings(v, loadIn[i])
+						end
+					end
+				end
+				loadSettings(library.decode(readfile(library.Name .. ' UI/Settings.lua')), library)
+			end)
+			if success then
+				return library.Settings
+			else
+
 			end
-			return library.Settings
 		end
 	end
 end
@@ -673,6 +694,13 @@ do
 		until not library.Parent:FindFirstChild(library.Name .. ' UI')
 		game:GetService("UserInputService").MouseIconEnabled = true
 		library.Enabled = true
+
+		task.spawn(function()
+			while library.Enabled and task.wait(5) do
+				if not library.Enabled then return end
+				library.Save()
+			end
+		end)
 
 		library.Load()
 		if library.Settings.AntiAFK then
@@ -709,7 +737,7 @@ do
 			AutoButtonColor = false,
 			ImageTransparency = 1,
 			BackgroundTransparency = 1,
-			Image = 'rbxassetid://6023426988',
+			Image = library.Icon,
 			ImageColor3 = library.Settings.theme.Accent
 		})
         local Frame = Create('Frame', {
@@ -754,7 +782,7 @@ do
                         }),
                         Create('Frame', {
                             Name = 'Logo',
-                            Size = UDim2.new(0, 0, 0.9, 0),
+                            Size = UDim2.new(0, 0, 0.8, 0),
                             BackgroundTransparency = 1,
                             LayoutOrder = 0,
                             ZIndex = 2
@@ -763,7 +791,7 @@ do
                                 Size = UDim2.new(1, 0, 1, 0),
                                 AutoButtonColor = false,
                                 BackgroundTransparency = 1,
-                                Image = 'rbxassetid://6023426988',
+                                Image = library.Icon,
                                 ImageColor3 = library.Settings.theme.Accent,
                                 ZIndex = 2
                             })
@@ -897,7 +925,7 @@ do
             }, UDim.new(0, 8)),
             Create('Frame', {
                 Name = 'Left_Frame',
-                Size = UDim2.new(0, math.max(UISize.X.Offset * 0.07, library.LeftBar_MinSize), 1, 0),
+                Size = UDim2.new(0, math.max(UISize.X.Offset * 0.07, library.Settings.LeftBar_MinSize), 1, 0),
                 BackgroundColor3 = library.Settings.theme.Background
             }, {
                 Create('Frame', {
@@ -927,8 +955,8 @@ do
                 Name = 'Section_Container',
                 ClipsDescendants = true,
                 ScrollingEnabled = false,
-                Size = UDim2.new(1, -math.max(UISize.X.Offset * 0.07, library.LeftBar_MinSize), 0.9, 0),
-                Position = UDim2.new(0, math.max(UISize.X.Offset * 0.07, library.LeftBar_MinSize), 0.1, 0),
+                Size = UDim2.new(1, -math.max(UISize.X.Offset * 0.07, library.Settings.LeftBar_MinSize), 0.9, 0),
+                Position = UDim2.new(0, math.max(UISize.X.Offset * 0.07, library.Settings.LeftBar_MinSize), 0.1, 0),
                 BackgroundTransparency = 1,
                 BorderSizePixel = 0,
                 ScrollBarThickness = 0,
@@ -961,7 +989,7 @@ do
             }),
         }, UDim.new(0, 20))
         Frame.Section_Container.Home_Container.Size = UDim2.new(1, 0, 0, Frame.Section_Container.AbsoluteSize.Y)
-        Frame.Top_Frame.Container.Left.Logo.Size = UDim2.new(0, Frame.Top_Frame.Container.Left.Logo.AbsoluteSize.Y, 0.9, 0)
+        Frame.Top_Frame.Container.Left.Logo.Size = UDim2.new(0, Frame.Top_Frame.Container.Left.Logo.AbsoluteSize.Y, 0, Frame.Top_Frame.Container.Left.Logo.AbsoluteSize.Y)
         Frame.Top_Frame.Container.Left.UI_Name.Size = UDim2.new(0, library.Functions.GetTextSize(Frame.Top_Frame.Container.Left.UI_Name.Text, Frame.Top_Frame.Container.Left.UI_Name.TextBounds.Y, Frame.Top_Frame.Container.Left.UI_Name.Font).X, 0.6, 0)
         Frame.Top_Frame.Container.Left.UI_Version.Size = UDim2.new(0, library.Functions.GetTextSize(Frame.Top_Frame.Container.Left.UI_Version.Text, Frame.Top_Frame.Container.Left.UI_Version.TextBounds.Y, Frame.Top_Frame.Container.Left.UI_Version.Font).X, 0.4, 0)
 
@@ -1003,9 +1031,9 @@ do
 			if lib.toggling then
 				return
 			end
-            library.Functions.Tween(Frame.Top_Frame.Container.Left.Search_Frame.TextBox.Frame, { BackgroundColor3 = library.Settings.theme.Accent }, 0.2)
-			if library.focusedPage then
-				for i, v in pairs(library.focusedPage.container:GetDescendants()) do
+            lib.Functions.Tween(Frame.Top_Frame.Container.Left.Search_Frame.TextBox.Frame, { BackgroundColor3 = lib.Settings.theme.Accent }, 0.2)
+			if lib.focusedPage then
+				for i, v in pairs(lib.focusedPage.container:GetDescendants()) do
 					if v:FindFirstChild('Section') and v:FindFirstChild('Section').ClassName == 'NumberValue' then
 						local Elements = 0
 						for i, v in pairs(v:GetChildren()) do
@@ -1023,7 +1051,7 @@ do
 					end
 				end
 				task.spawn(function()
-					library.focusedPage:Resize()
+					lib.focusedPage:Resize()
 				end)
 			end
         end)
@@ -1031,9 +1059,9 @@ do
 			if lib.toggling then
 				return
 			end
-            library.Functions.Tween(Frame.Top_Frame.Container.Left.Search_Frame.TextBox.Frame, { BackgroundColor3 = library.Settings.theme.LightContrast }, 0.2)
-			if library.focusedPage then
-				for i, v in pairs(library.focusedPage.container:GetDescendants()) do
+            lib.Functions.Tween(Frame.Top_Frame.Container.Left.Search_Frame.TextBox.Frame, { BackgroundColor3 = lib.Settings.theme.LightContrast }, 0.2)
+			if lib.focusedPage then
+				for i, v in pairs(lib.focusedPage.container:GetDescendants()) do
 					if v:FindFirstChild('Section') and v:FindFirstChild('Section').ClassName == 'NumberValue' then
 						local Elements = 0
 						for i, v in pairs(v:GetChildren()) do
@@ -1075,7 +1103,7 @@ do
 					end
 				end
 				task.spawn(function()
-					library.focusedPage:Resize()
+					lib.focusedPage:Resize()
 				end)
 			end
         end)
@@ -1083,18 +1111,18 @@ do
 			if lib.toggling then
 				return
 			end
-			if not library.focusedPage then
+			if not lib.focusedPage then
 				Frame.Top_Frame.Container.Left.Search_Frame.TextBox.Text = ''
 			end
 		end)
-        library.Functions.TextEffect(Frame.Top_Frame.Container.Left.UI_Version, 0.15)
+        lib.Functions.TextEffect(Frame.Top_Frame.Container.Left.UI_Version, 0.15)
         Frame.Top_Frame.Container.Left.Search_Button.MouseButton1Click:Connect(function()
 			if lib.toggling then
 				return
 			end
-            library.Functions.Ripple(Frame.Top_Frame.Container.Left.Search_Button, 0.6)
-			if library.focusedPage then
-				for i, v in pairs(library.focusedPage.container:GetDescendants()) do
+            lib.Functions.Ripple(Frame.Top_Frame.Container.Left.Search_Button, 0.6)
+			if lib.focusedPage then
+				for i, v in pairs(lib.focusedPage.container:GetDescendants()) do
 					if v:FindFirstChild('Section') and v:FindFirstChild('Section').ClassName == 'NumberValue' then
 						local Elements = 0
 						for i, v in pairs(v:GetChildren()) do
@@ -1141,7 +1169,7 @@ do
 					end
 				end
 				task.spawn(function()
-					library.focusedPage:Resize()
+					lib.focusedPage:Resize()
 				end)
 			end
         end)
@@ -1149,7 +1177,7 @@ do
 			if lib.toggling then
 				return
 			end
-            library.Functions.Ripple(Frame.Top_Frame.Container.Right.Hide_Button, 0.6)
+            lib.Functions.Ripple(Frame.Top_Frame.Container.Right.Hide_Button, 0.6)
 			lib:toggle()
         end)
 		show_icon.MouseButton1Click:Connect(function()
@@ -1162,18 +1190,18 @@ do
 			if lib.toggling then
 				return
 			end
-            library.Functions.Tween(lib.sectionContainer, { CanvasPosition = Vector2.new(0, 0) }, 0.2)
-			if #lib.pages > 0 and library.focusedPage then
-				lib:SelectPage(library.focusedPage, false)
-				library.focusedPage = nil
+            lib.Functions.Tween(lib.sectionContainer, { CanvasPosition = Vector2.new(0, 0) }, 0.2)
+			if #lib.pages > 0 and lib.focusedPage then
+				lib:SelectPage(lib.focusedPage, false)
+				lib.focusedPage = nil
 			end
         end)
 
-		table.insert(library.connections, game:GetService("UserInputService").InputBegan:Connect(function(input, processed)
-			if lib.toggling or not library.Enabled or not library.Settings.prefix or typeof(library.Settings.prefix) ~= "EnumItem" then
+		table.insert(lib.connections, game:GetService("UserInputService").InputBegan:Connect(function(input, processed)
+			if lib.toggling or not lib.Enabled or not lib.Settings.prefix or typeof(lib.Settings.prefix) ~= "EnumItem" then
 				return
 			end
-			if not processed and input.KeyCode == library.Settings.prefix then
+			if not processed and input.KeyCode == lib.Settings.prefix then
 				lib:toggle()
 			end
 		end))
@@ -1181,8 +1209,7 @@ do
         return lib
     end
 	function library:Close()
-		library.Enabled = false
-		library.Save()
+		self.Enabled = false
 		task.spawn(function()
 			for _, func in pairs(library.end_funcs) do
 				func()
@@ -1204,7 +1231,7 @@ do
 
         local OriginalSize = page.button.Size
 		page.button.MouseEnter:Connect(function()
-			if library.focusedPage ~= page then
+			if self.focusedPage ~= page then
                 library.Functions.Tween(page.button, { Size = page.button.Size + UDim2.fromOffset(4, 4) }, 0.2).Completed:Wait()
 			end
 		end)
@@ -1218,7 +1245,7 @@ do
 		return page
 	end
 	function library:SelectPage(page: table, toggle: boolean)
-		if toggle and library.focusedPage == page then
+		if toggle and self.focusedPage == page then
 			return
 		end
 
@@ -1226,8 +1253,8 @@ do
 			page = self.pages[1]
 			library.Functions.Tween(page.button, { ImageColor3 = library.Settings.theme.Accent }, 0.2)
 
-			local focusedPage = library.focusedPage
-			library.focusedPage = page
+			local focusedPage = self.focusedPage
+			self.focusedPage = page
 
 			if focusedPage then
 				self:SelectPage(focusedPage)
@@ -1246,8 +1273,8 @@ do
 		if toggle then
 			library.Functions.Tween(page.button, { ImageColor3 = library.Settings.theme.Accent }, 0.2)
 
-			local focusedPage = library.focusedPage
-			library.focusedPage = page
+			local focusedPage = self.focusedPage
+			self.focusedPage = page
 
 			if focusedPage then
 				self:SelectPage(focusedPage)
@@ -1262,8 +1289,8 @@ do
 			end)
 		else
 			library.Functions.Tween(page.button, { ImageColor3 = library.Settings.theme.LightContrast }, 0.2)
-			if page == library.focusedPage then
-				library.focusedPage = nil
+			if page == self.focusedPage then
+				self.focusedPage = nil
 			end
 			task.spawn(function()
 				for i, v in pairs(page.container:GetDescendants()) do
@@ -1288,6 +1315,9 @@ do
 		end
 
 		self.toggling = true
+		if self.Visible == nil then
+			self.Visible = true
+		end
 
 		if self.Visible then
 			self.Visible = false
@@ -1303,9 +1333,24 @@ do
 				self.container.show_icon.Visible = false
 			end)
 		end
-		wait(1)
+		task.wait(0.8)
 
 		self.toggling = false
+	end
+	function library:setTheme(theme, color3)
+		repeat task.wait()
+			library.Settings.theme[theme] = color3
+		until library.Settings.theme[theme] == color3
+		for property, objects in pairs(library.objects[theme] or {}) do
+			for i, object in pairs(objects) do
+				if not object.Parent then
+					objects[i] = nil
+				else
+					library.Functions.Tween(object, { [property] = color3 }, 0.1)
+					-- object[property] = color3
+				end
+			end
+		end
 	end
 
 	function library.page.new(config: table): table
