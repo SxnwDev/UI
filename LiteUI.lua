@@ -2642,6 +2642,7 @@ do
 						end
 					end
 					for i, value in pairs(library.Functions.BetterFindIndex(update_config, "List") or {}) do
+						local original_value = value
 						value = tostring(value)
 						local Dropdown_Item = Create("ImageButton", {
 							BackgroundTransparency = 1,
@@ -2728,7 +2729,7 @@ do
 										_value = multiList
 									else
 										if Dropdown_Item.IsEnabled.Value then
-											_value = value
+											_value = original_value
 										else
 											_value = nil
 										end
@@ -2738,7 +2739,7 @@ do
 										library.Functions.BetterFindIndex(update_config, "CallBack")(multiList)
 									else
 										if Dropdown_Item.IsEnabled.Value then
-											library.Functions.BetterFindIndex(update_config, "CallBack")(value)
+											library.Functions.BetterFindIndex(update_config, "CallBack")(original_value)
 										else
 											library.Functions.BetterFindIndex(update_config, "CallBack")(nil)
 										end
@@ -2775,7 +2776,7 @@ do
 										_value = multiList
 									else
 										if Dropdown_Item.IsEnabled.Value then
-											_value = value
+											_value = original_value
 										else
 											_value = nil
 										end
@@ -2785,7 +2786,7 @@ do
 										library.Functions.BetterFindIndex(update_config, "CallBack")(multiList)
 									else
 										if Dropdown_Item.IsEnabled.Value then
-											library.Functions.BetterFindIndex(update_config, "CallBack")(value)
+											library.Functions.BetterFindIndex(update_config, "CallBack")(original_value)
 										else
 											library.Functions.BetterFindIndex(update_config, "CallBack")(nil)
 										end
@@ -3923,4 +3924,94 @@ library.Icons = {
 	["zoom-out-2"] = "rbxassetid://3610253853",
 }
 
-return library
+-- return library
+local window = library:new()
+
+local page = window:addPage({
+    icon = nil, -- or roblox image id
+    title = "page_name",
+})
+do
+    local section = page:addSection({
+        Divisions = 1,
+    })
+    section:addButton({
+        Section = 1,
+        title = "Button",
+        disabled = false,
+        corner = 5,
+        callback = function() end,
+    })
+    section:addClipboardLabel({
+        Section = 1,
+        text = "Clipboad Label",
+        corner = 5,
+    })
+    section:addDualLabel({
+        Section = 1,
+        title = "Title",
+        description = "Description",
+        corner = 5,
+    })
+    section:addLabel({
+        Section = 1,
+        text = '<font color="#' .. library.Settings.theme.Accent:ToHex() .. '"><b>Lite</b></font>, the best UI ^-^',
+        textsize = nil, -- auto
+        textxalignment = Enum.TextXAlignment.Left,
+        textyalignment = Enum.TextYAlignment.Center,
+    })
+    section:addSlider({
+        Section = 1,
+        Max = 10,
+        Min = 0,
+        Default = 0,
+        title = "Slider",
+        disabled = false,
+        corner = 5,
+        callback = function() end,
+    })
+    section:addToggle({
+        Section = 1,
+        title = "Toggle",
+        keybind = false,
+        keybind_default = Enum.KeyCode.LeftAlt,
+        keybind_callback = function() end,
+        keybind_changedcallback = function() end,
+        default = false,
+        resetonspawn = false,
+        corner = 5,
+        disabled = false,
+        callback = function() end,
+    })
+    section:addCheckbox({
+        Section = 1,
+        default = false,
+        corner = 5,
+        title = "CheckBox",
+        disabled = false,
+        Group = "group_name", -- nil == no group
+        callback = function() end,
+    })
+    section:addKeybind({
+        Section = 1,
+        title = "KeyBind",
+        default = Enum.KeyCode.LeftAlt,
+        corner = 5,
+        disabled = false,
+        callback = function() end,
+        changedcallback = function() end,
+    })
+    section:addDropdown({
+        Section = 1,
+        title = "Dropdown",
+        corner = 5,
+        List = { 1, 2, 3, 4, 5 },
+	keybind = false,
+        multi = false,
+        callback = function() end
+    })
+	section:add3DPlayer({
+		Player = game.Players.LocalPlayer,
+		UpdateAnim = true
+	})
+end
