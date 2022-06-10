@@ -2543,7 +2543,7 @@ do
 		dropdown.Frame.KeyBind.Size = UDim2.new(0, dropdown.Frame.KeyBind.AbsoluteSize.Y * 5, 0.55, 0)
 		dropdown.Frame.Frame.Size = UDim2.new(0, dropdown.Frame.Frame.AbsoluteSize.Y, 0, dropdown.Frame.Frame.AbsoluteSize.Y)
 		dropdown.Frame.TextBox.Size = UDim2.new(1, - dropdown.Frame.Frame.AbsoluteSize.X, 1, 0)
-
+-- FIX CALLBACK
 		table.insert(self.modules, dropdown)
 		self.page:Resize()
 
@@ -2577,6 +2577,13 @@ do
 					end
 				else
 					return false
+				end
+			end
+			local function check_value(var)
+				if library.Functions.BetterFindIndex(update_config, var) ~= nil then
+					return library.Functions.BetterFindIndex(update_config, var)
+				elseif library.Functions.BetterFindIndex(config, var) ~= nil then
+					return library.Functions.BetterFindIndex(config, var)
 				end
 			end
 
@@ -2677,7 +2684,7 @@ do
 									ImageColor3 = library.Settings.theme.TextColor,
 									ImageTransparency = 1,
 								}),
-							}, UDim.new(0, library.Functions.BetterFindIndex(update_config, "Corner") or 5)),
+							}, UDim.new(0, check_value("Corner") or 5)),
 							Create("TextLabel", {
 								BackgroundTransparency = 1,
 								Size = UDim2.new(1, 0, 1, 0),
@@ -2695,7 +2702,7 @@ do
 						updateDropdown_Item(
 							Dropdown_Item,
 							Dropdown_Item.IsEnabled.Value,
-							library.Functions.BetterFindIndex(update_config, "Multi")
+							check_value("Multi")
 						)
 
 						table.insert(multiListGroup, Dropdown_Item)
@@ -2704,7 +2711,7 @@ do
 							Dropdown_Item.IsEnabled.Value = not Dropdown_Item.IsEnabled.Value
 							savedValues[value] = Dropdown_Item.IsEnabled.Value
 
-							if library.Functions.BetterFindIndex(update_config, "Multi") then
+							if check_value("Multi") then
 								if Dropdown_Item.IsEnabled.Value then
 									table.insert(multiList, value)
 								else
@@ -2720,12 +2727,12 @@ do
 							updateDropdown_Item(
 								Dropdown_Item,
 								Dropdown_Item.IsEnabled.Value,
-								library.Functions.BetterFindIndex(update_config, "Multi")
+								check_value("Multi")
 							)
 
-							if library.Functions.BetterFindIndex(update_config, "CallBack") then
+							if check_value("CallBack") then
 								if check_boolean("KeyBind") then
-									if library.Functions.BetterFindIndex(update_config, "Multi") then
+									if check_value("Multi") then
 										_value = multiList
 									else
 										if Dropdown_Item.IsEnabled.Value then
@@ -2735,13 +2742,13 @@ do
 										end
 									end
 								else
-									if library.Functions.BetterFindIndex(update_config, "Multi") then
-										library.Functions.BetterFindIndex(update_config, "CallBack")(multiList)
+									if check_value("Multi") then
+										check_value("CallBack")(multiList)
 									else
 										if Dropdown_Item.IsEnabled.Value then
-											library.Functions.BetterFindIndex(update_config, "CallBack")(original_value)
+											check_value("CallBack")(original_value)
 										else
-											library.Functions.BetterFindIndex(update_config, "CallBack")(nil)
+											check_value("CallBack")(nil)
 										end
 									end
 								end
@@ -2751,7 +2758,7 @@ do
 							Dropdown_Item.IsEnabled.Value = not Dropdown_Item.IsEnabled.Value
 							savedValues[value] = Dropdown_Item.IsEnabled.Value
 
-							if library.Functions.BetterFindIndex(update_config, "Multi") then
+							if check_value("Multi") then
 								if Dropdown_Item.IsEnabled.Value then
 									table.insert(multiList, value)
 								else
@@ -2767,12 +2774,12 @@ do
 							updateDropdown_Item(
 								Dropdown_Item,
 								Dropdown_Item.IsEnabled.Value,
-								library.Functions.BetterFindIndex(update_config, "Multi")
+								check_value("Multi")
 							)
 
-							if library.Functions.BetterFindIndex(update_config, "CallBack") then
+							if check_value("CallBack") then
 								if check_boolean("KeyBind") then
-									if library.Functions.BetterFindIndex(update_config, "Multi") then
+									if check_value("Multi") then
 										_value = multiList
 									else
 										if Dropdown_Item.IsEnabled.Value then
@@ -2782,13 +2789,13 @@ do
 										end
 									end
 								else
-									if library.Functions.BetterFindIndex(update_config, "Multi") then
-										library.Functions.BetterFindIndex(update_config, "CallBack")(multiList)
+									if check_value("Multi") then
+										check_value("CallBack")(multiList)
 									else
 										if Dropdown_Item.IsEnabled.Value then
-											library.Functions.BetterFindIndex(update_config, "CallBack")(original_value)
+											check_value("CallBack")(original_value)
 										else
-											library.Functions.BetterFindIndex(update_config, "CallBack")(nil)
+											check_value("CallBack")(nil)
 										end
 									end
 								end
