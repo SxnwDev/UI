@@ -43,6 +43,7 @@ local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/SxnwD
 
 library.Name = 'Lite'
 library.Version = 'v. 1.0.0'
+library.Icon = library.Icons['hexagon-2']
 library.Parent = game.CoreGui
 
 library.Settings.AntiAFK = true
@@ -60,7 +61,7 @@ local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/SxnwD
 local window = library:new()
 
 local page = window:addPage({
-    icon = nil, -- or roblox image id
+    icon = library.Icons.hexagon, -- or roblox image id
     title = "page_name",
 })
 do
