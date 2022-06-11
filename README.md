@@ -65,10 +65,9 @@ local window = library:new()
 
 window:Notification()
 window:Notification({
-	title = "Notification"
-})
-window:Notification({
-	description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin arcu magna, facilisis eu scelerisque nec, condimentum sed nibh. Ut id."
+    title = "Notification",
+    description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin arcu magna, facilisis eu scelerisque nec, condimentum sed nibh. Ut id.",
+    time = 5 -- seconds
 })
 ```
 > #### Add Modules
