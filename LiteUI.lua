@@ -701,7 +701,8 @@ do
 	library.section.__index = library.section
 
     local Create = library.Functions.Instance
-    function library:new() : table
+    function library:new(config) : table
+		config = config or {}
 		if not game:IsLoaded() then
 			game.Loaded:Wait()
 		end
@@ -721,6 +722,15 @@ do
 		end)
 
 		library.Load()
+		if library.Functions.BetterFindIndex(config, "Title") then
+			library.Name = library.Functions.BetterFindIndex(config, "Title")
+		end
+		if library.Functions.BetterFindIndex(config, "Version") then
+			library.Version = library.Functions.BetterFindIndex(config, "Version")
+		end
+		if library.Functions.BetterFindIndex(config, "Icon") then
+			library.Icon = library.Functions.BetterFindIndex(config, "Icon")
+		end
 		if library.Settings.AntiAFK then
 			table.insert(library.connections, player.Idled:connect(function()
 				pcall(function()
