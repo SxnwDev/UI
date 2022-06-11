@@ -51,6 +51,7 @@ library.Parent = game.CoreGui
 library.Settings.AntiAFK = true
 library.Settings.prefix = Enum.KeyCode.LeftAlt
 library.Settings.Elements_Font = Enum.Font.SourceSans
+library.Settings.Max_Notifications = 3
 
 library:setTheme("Background", Color3.fromRGB(17, 14, 24)) -- Purple THEME
 library:setTheme("Contrast", Color3.fromRGB(12, 2, 15)) -- Purple THEME
