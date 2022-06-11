@@ -41,6 +41,8 @@ library.Functions.LoadConfig_game("Some game") -- Load config
 ```lua
 local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/SxnwDev/UI/main/LiteUI.lua"))()
 
+-- It is not necessary to set these values as they will be placed automatically
+
 library.Name = 'Lite'
 library.Version = 'v. 1.0.0'
 library.Icon = library.Icons['hexagon-2']
@@ -58,7 +60,14 @@ library:setTheme("Accent", Color3.fromRGB(55, 2, 105)) -- Purple THEME
 > #### Add Modules
 ```lua
 local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/SxnwDev/UI/main/LiteUI.lua"))()
-local window = library:new()
+
+-- It is not necessary to place all the configurations of the modules, only the necessary ones
+
+local window = library:new({
+    title = 'Lite',
+    version = 'v. 1.0.0',
+    icon = library.Icons['hexagon-2']
+})
 
 local page = window:addPage({
     icon = library.Icons.hexagon, -- or roblox image id
@@ -152,6 +161,8 @@ end
 > #### Update Modules
 ```lua
 local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/SxnwDev/UI/main/LiteUI.lua"))()
+
+-- It is not necessary to place all the configurations of the modules, only the necessary ones
 
 local section = library:new():addPage():addSection()
 
