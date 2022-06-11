@@ -57,6 +57,20 @@ library:setTheme("Contrast", Color3.fromRGB(12, 2, 15)) -- Purple THEME
 library:setTheme("DarkContrast", Color3.fromRGB(8, 0, 12)) -- Purple THEME
 library:setTheme("Accent", Color3.fromRGB(55, 2, 105)) -- Purple THEME
 ```
+> #### Notifications
+```lua
+local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/SxnwDev/UI/main/LiteUI.lua"))()
+
+local window = library:new()
+
+window:Notification()
+window:Notification({
+	title = "Notification"
+})
+window:Notification({
+	description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin arcu magna, facilisis eu scelerisque nec, condimentum sed nibh. Ut id."
+})
+```
 > #### Add Modules
 ```lua
 local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/SxnwDev/UI/main/LiteUI.lua"))()
