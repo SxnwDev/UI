@@ -17,6 +17,7 @@ local library = {
 		Elements_TextSize = 0,
 		Elements_Font = Enum.Font.SourceSans,
 		LeftBar_MinSize = 25,
+		Max_Notifications = 3,
 		theme = {
 			-- Background = Color3.fromRGB(17, 14, 24), -- Purple THEME
 			-- Contrast = Color3.fromRGB(12, 2, 15), -- Purple THEME
@@ -40,7 +41,8 @@ local library = {
 	Functions = {},
 	objects = {},
     page = {},
-    section = {}
+    section = {},
+	notifications = {}
 }
 local original_library_settings = library
 
@@ -701,6 +703,7 @@ do
 	library.section.__index = library.section
 
     local Create = library.Functions.Instance
+	local MaxNofications = 0
     function library:new(config) : table
 		config = config or {}
 		if not game:IsLoaded() then
@@ -1016,6 +1019,15 @@ do
                 })
             }),
         }, UDim.new(0, 20))
+		local Notifications_Container = Create('Frame', {
+			Parent = ScreenGui,
+			Name = 'Notifications_Container',
+			ClipsDescendants = true,
+			Size = UDim2.new(0, UISize.X.Offset / 1.5, 1, -library.Settings.Elements_TextSize * 2),
+			Position = UDim2.new(1, -library.Settings.Elements_TextSize, 1, -library.Settings.Elements_TextSize),
+			AnchorPoint = Vector2.new(1, 1),
+			BackgroundTransparency = 1,
+		})
         Frame.Section_Container.Home_Container.Size = UDim2.new(1, 0, 0, Frame.Section_Container.AbsoluteSize.Y)
         Frame.Top_Frame.Container.Left.Logo.Size = UDim2.new(0, Frame.Top_Frame.Container.Left.Logo.AbsoluteSize.Y, 0, Frame.Top_Frame.Container.Left.Logo.AbsoluteSize.Y)
         Frame.Top_Frame.Container.Left.UI_Name.Size = UDim2.new(0, library.Functions.GetTextSize(Frame.Top_Frame.Container.Left.UI_Name.Text, Frame.Top_Frame.Container.Left.UI_Name.TextBounds.Y, Frame.Top_Frame.Container.Left.UI_Name.Font).X, 0.6, 0)
@@ -1036,9 +1048,23 @@ do
             container = ScreenGui,
             pageContainer = Frame.Left_Frame.Container,
             sectionContainer = Frame.Section_Container,
+			notificationsContainer = Notifications_Container,
             pages = {},
         }, library)
 
+		task.spawn(function()
+			while library.Enabled and task.wait() do
+				local temp_number = 0
+				for i, v in pairs(library.notifications) do
+					temp_number += v.AbsoluteSize.Y
+					temp_number += (i - 1) * 10
+					if temp_number < lib.notificationsContainer.AbsoluteSize.Y then
+						MaxNofications += 1
+					end
+				end
+				MaxNofications = math.min(MaxNofications, library.Settings.Max_Notifications)
+			end
+		end)
 		task.spawn(function()
 			local i = 0
 			while true do task.wait()
@@ -1380,6 +1406,177 @@ do
 			end
 		end
 	end
+	function library:Notification(config: table): table
+		config = config or {}
+		local frame = Create('Frame', {
+			Name = 'Notification#'..#library.notifications,
+			Parent = self.notificationsContainer,
+			Visible = false,
+			Size = UDim2.new(1, 0, 0, library.Settings.Elements_Size * 1.3),
+			Position = UDim2.new(0, 0, 1, 0),
+			AnchorPoint = Vector2.new(0, 1),
+			BackgroundColor3 = library.Settings.theme.Background,
+			BackgroundTransparency = 1
+		}, {
+			Create('Frame', {
+				Name = 'Content_NoBackground',
+				Size = UDim2.new(1, 0, 1, -4),
+				BackgroundTransparency = 1
+			}, {
+				Create('UIPadding', {
+					PaddingLeft = UDim.new(0, 5),
+					PaddingRight = UDim.new(0, 5),
+					PaddingTop = UDim.new(0, 5),
+				}),
+                Create('UIListLayout', {
+                    Padding = UDim.new(0, 0),
+                    FillDirection = Enum.FillDirection.Vertical,
+                    VerticalAlignment = Enum.VerticalAlignment.Top,
+                    SortOrder = Enum.SortOrder.LayoutOrder
+                }),
+				Create('TextLabel', {
+					Name = 'Title_NoBackground',
+					Size = UDim2.new(1, 0, 0, library.Settings.Elements_TextSize + 1),
+					BackgroundTransparency = 1,
+					Text = '<b>' .. (library.Functions.BetterFindIndex(config, 'Title') and library.Functions.BetterFindIndex(config, 'Title') ~= "" and library.Functions.BetterFindIndex(config, 'Title') or library.Name) .. '</b>',
+					Font = Enum.Font.SciFi,
+					RichText = true,
+					TextSize = library.Settings.Elements_TextSize + 1,
+					TextColor3 = library.Settings.theme.TextColor,
+					TextXAlignment = Enum.TextXAlignment.Left,
+					LayoutOrder = 0
+				}),
+				Create('TextLabel', {
+					Name = 'Description_NoBackground',
+					Size = UDim2.new(1, 0, 0, library.Settings.Elements_TextSize),
+					BackgroundTransparency = 1,
+					Font = library.Settings.Elements_Font,
+					LineHeight = 0.8,
+					RichText = true,
+					TextWrapped = true,
+					TextSize = library.Settings.Elements_TextSize,
+					TextColor3 = library.Settings.theme.TextColor,
+					TextXAlignment = Enum.TextXAlignment.Left,
+					TextYAlignment = Enum.TextYAlignment.Top,
+					LayoutOrder = 1
+				}),
+			}),
+			Create('Frame', {
+				Name = 'Bar',
+				Size = UDim2.new(1, 0, 0, 4),
+				Position = UDim2.new(0, 0, 1, 0),
+				AnchorPoint = Vector2.new(0, 1),
+				BackgroundColor3 = library.Settings.theme.Accent,
+				BorderSizePixel = 0
+			}, {
+			}, UDim.new(0, library.Functions.BetterFindIndex(config, 'Corner') or 5))
+		}, UDim.new(0, library.Functions.BetterFindIndex(config, 'Corner') or 5))
+
+		table.insert(library.notifications, frame)
+
+		local text = (library.Functions.BetterFindIndex(config, "Description") and library.Functions.BetterFindIndex(config, "Description") ~= "" and library.Functions.BetterFindIndex(config, "Description")) or "Description"
+		for i = 1, text:len() do
+			frame.Content_NoBackground.Description_NoBackground.Text = text:sub(1, i)
+			frame.Content_NoBackground.Description_NoBackground.Size = UDim2.new(1, 0, 0, frame.Content_NoBackground.Description_NoBackground.TextBounds.Y)
+		end
+		frame.Size = UDim2.new(1, 0, 0, (library.Settings.Elements_Size * 1.3) + frame.Content_NoBackground.Description_NoBackground.AbsoluteSize.Y)
+
+		table.insert(library.connections, frame.Destroying:connect(function()
+			for i, v in pairs(library.notifications) do
+				pcall(function()
+					if i == 1 or i % 4 == 0 then
+						v.Position = UDim2.new(0, 0, 1, 0)
+					else
+						v.Position = library.notifications[i - 1].Position - UDim2.new(0, 0, 0, library.notifications[i - 1].AbsoluteSize.Y + 10)
+					end
+				end)
+			end
+		end))
+
+		local function show(time)
+			task.spawn(function()
+				for i, v in pairs(self.notificationsContainer:GetDescendants()) do
+					pcall(function()
+						if not string.find(v.Name, '_NoBackground') then
+							library.Functions.Tween(v, { BackgroundTransparency = 0 }, time)
+						end
+					end)
+					pcall(function()
+						library.Functions.Tween(v, { ImageTransparency = 0 }, time)
+					end)
+					pcall(function()
+						library.Functions.Tween(v, { TextTransparency  = 0 }, time)
+					end)
+				end
+			end)
+		end
+		local function hide(time)
+			task.spawn(function()
+				for i, v in pairs(self.notificationsContainer:GetDescendants()) do
+					pcall(function()
+						library.Functions.Tween(v, { BackgroundTransparency = 1 }, time)
+					end)
+					pcall(function()
+						library.Functions.Tween(v, { ImageTransparency = 1 }, time)
+					end)
+					pcall(function()
+						library.Functions.Tween(v, { TextTransparency  = 1 }, time)
+					end)
+				end
+			end)
+		end
+		hide(0)
+		task.spawn(function()
+			pcall(function()
+				if #library.notifications == 1 then
+					frame.Visible = true
+					show(0.2); task.wait(0.2)
+					library.Functions.Tween(frame.Bar, { Size = UDim2.new(0, 0, 0, 4) }, library.Functions.BetterFindIndex(config, 'Time') or 5).Completed:Wait()
+					hide(0.2)
+					library.Functions.Tween(frame, { Position = frame.Position + UDim2.new(0, 0, 0, frame.AbsoluteSize.Y) }, 0.2).Completed:Wait()
+					table.remove(library.notifications, table.find(library.notifications, frame))
+					frame:Destroy()
+				else
+					if table.find(library.notifications, frame) > MaxNofications then
+						repeat
+							task.wait()
+						until table.find(library.notifications, frame) <= MaxNofications
+					end
+					local notification_pos = table.find(library.notifications, frame)
+
+					-- task.spawn(function()
+					-- 	for i, v in pairs(library.notifications) do
+					-- 		pcall(function()
+					-- 			if i == 1 then
+					-- 				library.Functions.Tween(v, { Position = UDim2.new(0, 0, 1, 0) }, 0.1).Completed:Wait()
+					-- 			else
+					-- 				if i % 4 == 0 then
+					-- 					library.Functions.Tween(v, { Position = UDim2.new(0, 0, 1, 0) }, 0.1).Completed:Wait()
+					-- 				else
+					-- 					library.Functions.Tween(v, { Position = library.notifications[i - 1].Position - UDim2.new(0, 0, 0, library.notifications[i - 1].AbsoluteSize.Y + 10) }, 0.1).Completed:Wait()
+					-- 				end
+					-- 			end
+					-- 		end)
+					-- 	end
+					-- end)
+
+					if notification_pos == 1 or notification_pos % 4 == 0 then
+						frame.Position = UDim2.new(0, 0, 1, 0)
+					else
+						frame.Position = library.notifications[notification_pos - 1].Position - UDim2.new(0, 0, 0, library.notifications[notification_pos - 1].AbsoluteSize.Y + 10)
+					end
+
+					frame.Visible = true
+					show(0.2); task.wait(0.2)
+					library.Functions.Tween(frame.Bar, { Size = UDim2.new(0, 0, 0, 4) }, library.Functions.BetterFindIndex(config, 'Time') or 5).Completed:Wait()
+					hide(0.2)
+					library.Functions.Tween(frame, { Position = frame.Position + UDim2.new(0, 0, 0, frame.AbsoluteSize.Y) }, 0.2).Completed:Wait()
+					table.remove(library.notifications, table.find(library.notifications, frame))
+					frame:Destroy()
+				end
+			end)
+		end)
+	end
 
 	function library.page.new(config: table): table
 		config = config or {}
@@ -1654,7 +1851,7 @@ do
 
 		return { Instance = button, Update = update }
 	end
-	function library.section:addClipboardLabel(config: table): Instance
+	function library.section:addClipboardLabel(config: table): table
 		config = config or {}
 
 		local ClipboardLabel = Create('Frame', {
@@ -1723,7 +1920,7 @@ do
 
 		return { Instance = ClipboardLabel, Update = update }
 	end
-	function library.section:addDualLabel(config: table): Instance
+	function library.section:addDualLabel(config: table): table
 		config = config or {}
 		local titleText = ((library.Functions.BetterFindIndex(config, "Title") and library.Functions.BetterFindIndex(config, "Title") ~= "" and library.Functions.BetterFindIndex(config, "Title")) or "Title") .. ":"
 		local descText = (library.Functions.BetterFindIndex(config, "Description") and library.Functions.BetterFindIndex(config, "Description") ~= "" and library.Functions.BetterFindIndex(config, "Description")) or "Description"
@@ -1794,7 +1991,7 @@ do
 
 		return { Instance = frame, Update = update }
 	end
-	function library.section:addLabel(config: table): Instance
+	function library.section:addLabel(config: table): table
 		config = config or {}
 		local label = Create("TextLabel", {
 			Name = "Label_Element",
@@ -2069,7 +2266,7 @@ do
 
 		return { Instance = slider, Update = update }
 	end
-	function library.section:addToggle(config: table): Instance
+	function library.section:addToggle(config: table): table
 		config = config or {}
 		local toggle = Create("ImageButton", {
 			Name = "Toggle_Element",
@@ -2319,7 +2516,7 @@ do
 
 		return { Instance = toggle, Update = update, KeyBind = { Instance = toggle.KeyBind, Update = update_KeyBind } }
 	end
-	function library.section:addKeybind(config: table): Instance
+	function library.section:addKeybind(config: table): table
 		config = config or {}
 		local keybind = Create("ImageButton", {
 			Name = "Keybind_Element",
@@ -2497,7 +2694,7 @@ do
 
 		return { Instance = keybind, Update = update }
 	end
-	function library.section:addDropdown(config: table): Instance
+	function library.section:addDropdown(config: table): table
 		config = config or {}
 		local dropdown = Create("Frame", {
 			Name = "Dropdown_Element",
@@ -3002,7 +3199,7 @@ do
 
 		return { Instance = dropdown, Update = update}
 	end
-	function library.section:addCheckbox(config: table): Instance
+	function library.section:addCheckbox(config: table): table
 		config = config or {}
 		local checkbox = Create("ImageButton", {
 			Name = "Checkbox_Element",
@@ -3202,7 +3399,7 @@ do
 
 		return { Instance = checkbox, Update = update}
 	end
-	function library.section:add3DPlayer(config: table): Instance
+	function library.section:add3DPlayer(config: table): table
 		config = config or {}
 		local ViewPlayer = Create("ViewportFrame", {
 			Name = "ViewPlayer_Element",
