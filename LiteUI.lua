@@ -42,7 +42,7 @@ local library = {
     page = {},
     section = {}
 }
-local original_library_settings
+local original_library_settings = library
 
 -- encode/decode function
 do
@@ -662,7 +662,25 @@ do
 			if success then
 				return library.Settings
 			else
+				library.Name = original_library_settings.Name
+				library.Version = original_library_settings.Version
+				library.Icon = original_library_settings.Icon
+				library.Parent = original_library_settings.Parent
+				library.IsMobile = original_library_settings.IsMobile
+				library.IsFileSystem = original_library_settings.IsFileSystem
+				library.Settings = original_library_settings.Settings
 
+				local settings = {
+					Name = library.Name,
+					Version = library.Version,
+					Icon = library.Icon,
+					Parent = library.Parent,
+					IsMobile = library.IsMobile,
+					IsFileSystem = library.IsFileSystem,
+					Settings = library.Settings,
+				}
+
+				writefile(library.Name .. ' UI/Settings.lua', library.encode(settings))
 			end
 		end
 	end
